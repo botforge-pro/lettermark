@@ -5,9 +5,11 @@
 ### Changed
 
 - `cases.yaml` now says which Unicode versions its cases hold for, and why they
-  hold across all of them: the ports read grapheme clusters from different
-  places, on different versions of the standard, and the cases are written not
-  to depend on the rules that moved. No case changed, and no answer changed.
+  hold across all of them. Each port reads grapheme clusters from whatever its
+  language offers — a dependency in Go, the runtime in Swift, a generated table
+  in Kotlin — and those sit on different versions of the standard, so the cases
+  are written not to lean on the rules that moved between them. No case
+  changed, and no answer changed.
 
 ## 0.2.0
 
@@ -45,8 +47,10 @@
 
 - `Slots` and `Slot` at package level. Both moved onto the palette, and the
   constant became a method, so `lettermark.Slots` is now `marks.Slots()` —
-  parentheses included. Twelve was the first caller's palette, and the second
-  one paints a different number.
+  parentheses included. A method call is not a constant expression, so a `const`
+  or an array length that stood on the old `Slots` needs rewriting rather than
+  reparenthesising. Twelve was the first caller's palette, and the second one
+  paints a different number.
 
 ## 0.1.0
 

@@ -22,6 +22,14 @@ Build it once, with the rest of your setup. `NewPalette` refuses a count below
 1, because a palette that paints nothing means the code and the theme disagree,
 and the place to hear that is startup rather than the middle of a screen.
 
+The same id always answers the same slot, so a thing keeps its colour between
+screens and between runs — for as long as the palette holds the same number of
+colours. Painting one more or one fewer moves almost everything to a different
+colour, which readers notice.
+
+A `Palette` is a value that holds one number and never changes, so the one you
+built at startup is read from as many goroutines as you like.
+
 `Initials` is given the name a reader sees. A caller holding markup strips it
 first; this library does not know what markup its caller writes.
 
