@@ -28,3 +28,11 @@ answered by all of them or fails loudly.
 - Go — this repository, and the one the others follow
 - Swift — [lettermark-swift](https://github.com/botforge-pro/lettermark-swift)
 - Kotlin — [lettermark-kotlin](https://github.com/botforge-pro/lettermark-kotlin)
+
+## Lines of Code
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/loc-history-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".github/loc-history-light.svg">
+  <img alt="Lines of Code graph" src=".github/loc-history-light.svg">
+</picture>
