@@ -2,8 +2,8 @@
 #
 # Two questions, and nothing else:
 #
-#   Initials(name) -> the letters drawn in the square
-#   Slot(id)       -> which of the palette's `slots` colour slots the thing gets
+#   Initials(name)  -> the letters drawn in the square
+#   Slot(id, slots) -> which of the caller's colour slots the thing gets
 #
 # Every port carries a copy of this file and answers every case in it. A case
 # added here is answered by all of them or fails loudly. Where a case below
@@ -68,7 +68,16 @@
 # answer -1 % 12 == -1, which is not a colour slot. Do not reach for abs()
 # instead — abs(Int64.min) overflows, and in Swift it traps.
 #
-# Ids 12 apart share a slot. That is accepted: the slot has to be the same
+# `slots` is how many colours the caller's own palette holds. The library has
+# no palette and no default count: a second caller paints a different number,
+# so a number chosen here would be wrong for one of them. Every case below
+# carries the palette it was asked about.
+#
+# A count below 1 is not a case here, because it is not a value the rule has an
+# answer for: it means the palette and the code disagree, and each port refuses
+# it the way its language refuses a broken invariant.
+#
+# Ids `slots` apart share a slot. That is accepted: the slot has to be the same
 # every time the same thing is drawn, and neighbours in a list still differ.
 #
 #
@@ -110,8 +119,7 @@
 # Deseret letter is half a surrogate pair. Swift: Character is already an
 # extended grapheme cluster, which is the one place Swift starts ahead.
 
-version: 1
-slots: 12
+version: 2
 
 initials:
 
@@ -597,65 +605,117 @@ initials:
 
 slot:
 
+  # ── A palette of twelve ──
+
   - case: zero
     id: 0
+    slots: 12
     expect: 0
 
   - case: one
     id: 1
+    slots: 12
     expect: 1
 
   - case: last-slot
     id: 11
+    slots: 12
     expect: 11
 
   - case: wraps-to-first
     id: 12
+    slots: 12
     expect: 0
 
   - case: wraps-past-first
     id: 13
+    slots: 12
     expect: 1
 
   - case: negative-one
     id: -1
+    slots: 12
     expect: 11
     # Plain id % 12 answers -1 in Go, Swift and Kotlin alike: an index no
     # palette has. Everything below is this same case, said louder.
 
   - case: negative-multiple
     id: -12
+    slots: 12
     expect: 0
 
   - case: negative-thirteen
     id: -13
+    slots: 12
     expect: 11
 
   - case: ordinary-id
     id: 1025
+    slots: 12
     expect: 5
 
   - case: another-ordinary-id
     id: 2982
+    slots: 12
     expect: 6
 
   - case: large-id
     id: 123456789
+    slots: 12
     expect: 9
 
   - case: beyond-double-precision
     id: 9007199254740993
+    slots: 12
     expect: 9
     # 2^53 + 1. A port that lets this through a 64-bit float — a JSON bridge, a
     # JavaScript layer, Swift's Double — reads 9007199254740992 and answers 8.
 
   - case: int64-max
     id: 9223372036854775807
+    slots: 12
     expect: 7
 
   - case: int64-min
     id: -9223372036854775808
+    slots: 12
     expect: 4
     # Must not crash. abs() of this value overflows: Swift traps, Kotlin's
     # Math.abs hands back the same negative number. The doubled remainder in
     # the rule has no such edge.
+
+  # ── Palettes of other sizes ──
+  #
+  # A port that kept a twelve of its own anywhere — a constant, a default
+  # argument, a fallback when the count looks wrong — answers these with the
+  # wrong colour while every case above still passes.
+
+  - case: single-colour-palette
+    id: 7
+    slots: 1
+    expect: 0
+
+  - case: single-colour-palette-negative
+    id: -7
+    slots: 1
+    expect: 0
+
+  - case: five-colour-palette
+    id: 7
+    slots: 5
+    expect: 2
+
+  - case: eight-colour-palette-negative
+    id: -3
+    slots: 8
+    expect: 5
+
+  - case: seven-colour-palette-int64-min
+    id: -9223372036854775808
+    slots: 7
+    expect: 6
+
+  - case: large-palette
+    id: 1025
+    slots: 256
+    expect: 1

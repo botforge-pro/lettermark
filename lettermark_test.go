@@ -14,7 +14,6 @@ import (
 )
 
 type corpus struct {
-	Slots    int `yaml:"slots"`
 	Initials []struct {
 		Case       string `yaml:"case"`
 		Name       string `yaml:"name"`
@@ -24,6 +23,7 @@ type corpus struct {
 	Slot []struct {
 		Case   string `yaml:"case"`
 		ID     int64  `yaml:"id"`
+		Slots  int    `yaml:"slots"`
 		Expect int    `yaml:"expect"`
 	} `yaml:"slot"`
 }
@@ -55,15 +55,30 @@ func TestCorpus_AnswersEveryCase(t *testing.T) {
 
 func TestCorpus_TheSlotsItNames(t *testing.T) {
 	cases := read(t)
-	require.Equal(t, lettermark.Slots, cases.Slots,
-		"the palette this library hands out slots for is not the one the corpus was written against")
 	require.NotEmpty(t, cases.Slot)
 
 	for _, one := range cases.Slot {
 		t.Run(one.Case, func(t *testing.T) {
-			assert.Equal(t, one.Expect, lettermark.Slot(one.ID))
+			palette := lettermark.NewPalette(one.Slots)
+			assert.Equal(t, one.Slots, palette.Slots())
+			assert.Equal(t, one.Expect, palette.Slot(one.ID))
 		})
 	}
+}
+
+func TestNewPalette_RefusesACountThatPaintsNothing(t *testing.T) {
+	for _, slots := range []int{0, -1} {
+		assert.Panics(t, func() { lettermark.NewPalette(slots) },
+			"a palette of %d colours means the code and the theme disagree, and a slot handed out now would be a colour nobody painted", slots)
+	}
+}
+
+func TestZeroPalette_SaysWhatIsMissing(t *testing.T) {
+	var unbuilt lettermark.Palette
+	assert.PanicsWithValue(t,
+		"lettermark: the zero Palette holds no colours; build it with NewPalette",
+		func() { unbuilt.Slot(1) },
+		"the bare remainder would divide by zero and name neither the type nor the way to build one")
 }
 
 func codepointsOf(text string) string {

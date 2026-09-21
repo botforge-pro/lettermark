@@ -8,13 +8,19 @@ the square, and which of the palette's colour slots it is drawn on.
 
 ```go
 letters := lettermark.Initials(name)
-slot := lettermark.Slot(id) // 0 … lettermark.Slots-1
+
+marks := lettermark.NewPalette(12) // however many colours your theme paints
+slot := marks.Slot(id)             // 0 … marks.Slots()-1
 ```
 
-The palette is not here. A caller keeps its own — CSS custom properties, a
-colour catalogue, a theme — with `lettermark.Slots` colours in it, and looks up
-the slot this library returns. That keeps one thing in one place: the rule here,
-the colours where the rest of the design lives.
+The palette is not here, and neither is its size. A caller keeps its own — CSS
+custom properties, a colour catalogue, a theme — and says how many colours are
+in it when it builds the palette. That keeps one thing in one place: the rule
+here, the colours where the rest of the design lives, the count beside them.
+
+Build it once, with the rest of your setup. `NewPalette` refuses a count below
+1, because a palette that paints nothing means the code and the theme disagree,
+and the place to hear that is startup rather than the middle of a screen.
 
 `Initials` is given the name a reader sees. A caller holding markup strips it
 first; this library does not know what markup its caller writes.

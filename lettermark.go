@@ -1,6 +1,7 @@
 package lettermark
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 
@@ -12,10 +13,27 @@ import (
 
 var fullUppercase = cases.Upper(language.Und)
 
-const Slots = 12
+type Palette struct {
+	slots int
+}
 
-func Slot(id int64) int {
-	return int(((id % Slots) + Slots) % Slots)
+func NewPalette(slots int) Palette {
+	if slots < 1 {
+		panic(fmt.Sprintf("lettermark: a palette of %d colours has no slot to hand out", slots))
+	}
+	return Palette{slots: slots}
+}
+
+func (p Palette) Slots() int {
+	return p.slots
+}
+
+func (p Palette) Slot(id int64) int {
+	if p.slots < 1 {
+		panic("lettermark: the zero Palette holds no colours; build it with NewPalette")
+	}
+	slots := int64(p.slots)
+	return int(((id % slots) + slots) % slots)
 }
 
 func Initials(name string) string {
