@@ -17,18 +17,27 @@
   slot := marks.Slot(id)             // 0 … marks.Slots()-1
   ```
 
-  Build the palette once, where the rest of your setup happens, rather than at
-  each call: `NewPalette` refuses a count below 1, and that refusal is worth
-  having at startup instead of halfway through drawing a screen.
+  Pass 12 and every colour stays where it was: the rule behind `Slot` is
+  unchanged, so a thing drawn yesterday is drawn in the same colour today.
 
-- `cases.yaml` carries the palette size in every slot case, and adds cases for
-  palettes of 1, 5, 7, 8 and 256 colours. A port holding a twelve of its own
-  anywhere answers the old cases correctly and these wrongly.
+  Build the palette once, where the rest of your setup happens, rather than at
+  each call. `NewPalette` panics on a count below 1 — there is no error to
+  handle and nothing to fall back to, because a palette that paints nothing
+  means your code and your theme disagree, and that is worth hearing at startup
+  instead of halfway through drawing a screen.
+
+- `cases.yaml`, the test corpus this package answers, now names a palette size
+  in every slot case and asks about palettes of 1, 5, 7, 8 and 256 colours.
+  This concerns you only if you answer that corpus yourself, in your own
+  implementation of these rules: one with a twelve left anywhere inside it
+  passes every case of 0.1.0 and fails the new ones.
 
 ### Removed
 
-- `Slots`, the package-level constant. Twelve was the first caller's palette,
-  and the second one paints a different number.
+- `Slots` and `Slot` at package level. Both moved onto the palette, and the
+  constant became a method, so `lettermark.Slots` is now `marks.Slots()` —
+  parentheses included. Twelve was the first caller's palette, and the second
+  one paints a different number.
 
 ## 0.1.0
 
