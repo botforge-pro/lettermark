@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1
+
+### Changed
+
+- `cases.yaml` now says which Unicode versions its cases hold for, and why they
+  hold across all of them: the ports read grapheme clusters from different
+  places, on different versions of the standard, and the cases are written not
+  to depend on the rules that moved. No case changed, and no answer changed.
+
 ## 0.2.0
 
 ### Changed
