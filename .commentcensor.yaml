@@ -1,0 +1,10 @@
+allow:
+  - file: lettermark_test.go
+    text: "// Output: WL"
+    what_was_tried_and_why_none_of_it_worked:
+      "This is not prose about the code: `go test` parses this line and fails
+       the run when the example prints anything else, and pkg.go.dev renders
+       the pair as the package's example. An assertion in the body instead
+       leaves the example printing into nothing, which the toolchain reports
+       as an example without output and never checks. Comment syntax is the
+       only form the Go toolchain accepts for it."
