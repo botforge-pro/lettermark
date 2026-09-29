@@ -1,13 +1,11 @@
 STATICCHECK_VERSION := v0.8.1
-COMMENTCENSOR_VERSION := v0.1.0
 STATICCHECK := $(shell go env GOPATH)/bin/staticcheck
 
-.PHONY: tools format lint comments test-build test build
+.PHONY: install-tools format lint comments test-build test build
 
-tools:
+install-tools:
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
-	python3 -m pip install --quiet \
-		git+https://github.com/botforge-pro/commentcensor.git@$(COMMENTCENSOR_VERSION)
+	python3 -m pip install --quiet --upgrade git+https://github.com/botforge-pro/commentcensor.git
 
 format:
 	gofmt -w .
