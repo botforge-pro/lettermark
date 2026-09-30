@@ -1,7 +1,11 @@
 STATICCHECK_VERSION := v0.8.1
 STATICCHECK := $(shell go env GOPATH)/bin/staticcheck
 
-.PHONY: install-tools format lint comments test-build test build
+.PHONY: install-tools format lint comments test-build test build sync-corpus
+
+sync-corpus:
+	cp cases.yaml ../lettermark-swift/Tests/LettermarkTests/Resources/cases.yaml
+	cp cases.yaml ../lettermark-kotlin/src/test/resources/cases.yaml
 
 install-tools:
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
